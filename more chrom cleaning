@@ -1,0 +1,17 @@
+#make sure to qrsh -l h_vmem=8g
+
+# Reads chromosome 19 (filtered) and reference genome
+chr19              <- read.table('chr19filtered', as.is=T, header=F)[-c(1,2,4,5)]
+colnames(chr19)[1] <- "POS"
+backup             <- chr19
+
+ref   <- read.table('/home/shyamg/projects/Mouse/AIL/otherVars/LGSM.mm10.flipped.vcf', as.is=T, header=T, skip=69, comment.char="")
+ref19 <- subset(ref, X.CHROM == "chr19")
+
+# The following looks in ref19$POS and chr19$POS. If there is a match, then 
+# the following script will subtract 2 from each entry in the matched row
+
+ref19Matches   <- which(!is.na(chr19$POS[match(ref19$POS, chr19$POS)]))
+shouldSubtract <- which(ref19$LG[ref19Matches] == "1/1")
+
+chr19[shouldSubtract, -1] <- 2 - chr19[shouldSubtract, -1] 

@@ -1,0 +1,25 @@
+#! /bin/env python
+
+#cleaning a very large data set in bash via python 
+
+import pickle
+
+thing = open('mousetest/mm10.fasta')
+print thing
+seq = {}
+for line in thing:
+    line = line.strip()
+    if '>chr' in line:
+    currentchrom = line[1:]
+	seq[currentchrom] = ‘'
+	print “Starting”, currentchrom
+	cnt = 0
+    else:
+	seq[currentchrom] += line
+  cnt += 1
+	if (cnt % 1000 == 0):
+		print “Done with”, cnt, “lines"
+pickfile = open(’seqdict.pck’, ‘w’)
+pickle.dump(seq, pickfile)
+close(pickfile)
+close(thing)

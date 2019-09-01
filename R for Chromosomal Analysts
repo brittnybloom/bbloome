@@ -1,0 +1,14 @@
+#R Script that analyzes a particular chromosome to find matches in batches of test subjects (all mice)
+
+chr15              <- read.table('chr15filtered', as.is=T, header=F)[-c(1,2,4,5)]
+colnames(chr15)[1] <- "POS"
+backup             <- chr15
+ref   <- read.table('/home/shyamg/projects/Mouse/AIL/otherVars/LGSM.mm10.flipped.vcf', as.is=T, header=T, skip=69, comment.char="")
+ref15 <- subset(ref, X.CHROM == "chr15")
+ref15Matches   <- which(!is.na(chr15$POS[match(ref15$POS, chr15$POS)]))
+shouldSubtract <- which(ref15$LG[ref15Matches] == "1/1")
+chr15[shouldSubtract, -1] <- 2 - chr15[shouldSubtract, -1] 
+library('lattice')
+chr15 <- as.matrix(chr15)
+testlist <- colMeans(matrix(chr15[,2:1001], nrow=100))
+testmat <- matrix(testlist, ,1001)

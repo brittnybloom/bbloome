@@ -1,0 +1,27 @@
+#plot chromosomal patters
+
+args <- commandArgs(trailingOnly=TRUE)
+chrom <- args[1]
+
+chrdat              <- read.table(paste0(chrom,'filtered'), as.is=T, header=F)[,-c(1,2,4,5)]
+colnames(chrdat)[1] <- "POS"
+ref   <- read.table('/home/shyamg/projects/Mouse/AIL/otherVars/LGSM.mm10.flipped.vcf', as.is=T, header=T, skip=69, comment.char="")
+ref   <- subset(ref, X.CHROM == chrom)
+refMatches   <- which(!is.na(chrdat$POS[match(ref$POS, chrdat$POS)]))
+shouldSubtract <- which(ref$LG[refMatches] == "1/1")
+chrdat[shouldSubtract, -1] <- 2 - chrdat[shouldSubtract, -1] 
+library('lattice')
+chrdat <- as.matrix(chrdat)
+
+
+ADD NA rows, make whole plot and save to file. 
+testlist <- colMeans(matrix(chrdat[,2:1101], nrow=100))
+testmat <- matrix(testlist, nc=1100)
+
+jpeg(file=paste0(chrom,"_inherited.jpg"))
+levelplot(....)
+dev.off()
+
+
+Example Usage:
+Rscript rfilename.R chr1 &
